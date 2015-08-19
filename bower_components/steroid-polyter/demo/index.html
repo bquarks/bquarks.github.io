@@ -1,0 +1,182 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html style="width: 100%; height: 100%;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>Polyter Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <!--<script>
+      window.Polymer = window.Polymer || {};
+      window.Polymer.dom = 'shadow';
+    </script>-->
+
+    <link rel="import" href="../steroid-polyter.html">
+    <link rel="import" href="pages/start-page.html">
+    <link rel="import" href="pages/product-example.html">
+    <link rel="import" href="layouts/top-navigation.html">
+    <link rel="import" href="layouts/side-bar.html">
+
+  </head>
+  <body style="margin: 0; width: 100%; height: 100%;">
+    <steroid-polyter style="position: absolute; width:100%; height:100%;">
+      <div region="header" style="width: 100%; height: 60px; position: fixed;"></div>
+      <div region="sidebar" style="height: 100%; width: 60px; position: fixed;"></div>
+      <div region="main" style="width: calc( 100% - 60px ); height: calc( 100% - 60px ); position: absolute; margin: 60px 0 0 60px;"></div>
+    </steroid-polyter>
+    <script type="text/javascript">
+      window.addEventListener('WebComponentsReady', function () {
+        // Polyter.go('home', {trigger:false});
+
+        Polyter.defaultConfig({
+          layout: {
+            sidebar: 'side-bar',
+            header: 'top-navigation'
+          },
+
+          extensions: [],
+
+          hooks: {
+            before: function () {
+              // this.ext.auth.config();
+              console.log('Hello I\'m a hook!');
+              // this.ext.auth.run();
+            }
+          }
+        });
+
+        Polyter.addRoute('/bower_components/steroid-polyter/demo/index.html', {
+
+          element: 'start-page',
+
+          // layoutElements: {
+          //   sidebar: 'visor-menu'
+          // },
+          // layout: {
+          //   name: 'my-visor',
+          //   regions: {
+          //     tools: ''
+          //   }
+          // }
+
+          // extensions: ['my-greeting'],
+
+          run: function () {
+            console.log('run');
+          },
+
+          before: function () {
+            console.log('before');
+          },
+
+          action: function () {
+            console.log('action');
+          },
+
+          after: function () {
+            console.log('after');
+          }
+          // Optional elements (can be setted by default).
+          // elements: {
+          //   'mainMenu' : 'sidebar', //Optional
+          // },
+          //
+          // extensions: ['corbel'],
+          //
+          // run: function () {
+          //   //this have the route scope with the params
+          //
+          //   //Access to the params.
+          //   console.log('Route params', this.params);
+          //
+          //   //Stop the route propagation
+          //   this.stop();
+          //
+          //   //Redirect to other route (also stop the route propagation)
+          //   this.redirect('/login');
+          //
+          //   //Get the previous route!
+          //   console.log('Previous route: ' + this.previousRoute);
+          //
+          // },
+          //
+          // before: function () {
+          //   //Same as above but now we have the extensions injection here.
+          //
+          //   //Get example extension information.
+          //   var doc = this.ext.corbel.find(this.params.id);
+          //
+          //   if (doc.isValid) {
+          //     // do something
+          //     this.ext.push.send('book-opened', this.params.id);
+          //   }
+          //   else {
+          //     this.redirect('/error-404');
+          //   }
+          //
+          //
+          //   // Maintain the route but change the element to render.
+          //   if (!this.ext.auth.isLoggedIn) {
+          //     this.render('my-login', 'main');
+          //   }
+          //
+          // },
+          //
+          // action: function () {
+          //   //Same as above but now we have the instances of the defined elements
+          //
+          //   //Get the element instance
+          //   var insPointer = this.instances['start-page'];
+          //
+          //   //Comes from other book?
+          //   if (this.previousRoute === this.route) {
+          //     //Add additional information to the element instance
+          //     // so we can render it with other view.
+          //     insPointer.fromOtherBook();
+          //   }
+          //
+          //
+          // },
+          //
+          // after: function () {
+          //   //Here we have the elements rendered
+          //   this.instances['page-demo'].changeTitle('new title'); //rules!
+          //
+          //   //Also we can do the other things but no this.render()
+          //
+          // },
+          //
+          // stop: function () {
+          //   //The route has been changed! Put some information
+          //   // here for the next route.
+          //
+          //   this.setAdditionalInfo({previousBookID: this.params.id});
+          // }
+        });
+
+        Polyter.addRoute('/bower_components/steroid-polyter/demo/:id', {
+          element: 'product-example',
+
+          run: function () {
+            console.log(this.params);
+          }
+        });
+        Polyter.addRoute('/components/steroid-polyter/demo/doc', {
+          element: 'product-doc'
+        });
+
+        Polyter.addRoute('/book', {
+          element: 'page-book'
+        });
+      });
+    </script>
+  </body>
+</html>

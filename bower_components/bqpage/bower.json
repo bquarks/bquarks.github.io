@@ -1,0 +1,23 @@
+{
+  "name": "bqpage",
+  "description": "Tiny client-side router (fork of visionmedia/page.js)",
+  "keywords": ["page", "route", "router", "routes", "pushState", "shadowDom"],
+  "main": "page.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bquarks/page.js"
+  },
+  "ignore": [
+    ".gitignore",
+    ".npmignore",
+    ".travis.yml",
+    "component.json",
+    "examples",
+    "History.md",
+    "Makefile",
+    "package.json",
+    "Readme.md",
+    "test"
+  ],
+  "license": "MIT"
+}

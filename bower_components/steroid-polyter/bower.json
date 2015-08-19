@@ -1,0 +1,42 @@
+{
+  "name": "steroid-polyter",
+  "version": "1.6.3",
+  "authors": [
+    "bq.com"
+  ],
+  "description": "An element providing routes handling with polymer",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "router",
+    "routes",
+    "polyter",
+    "page.js",
+    "hooks",
+    "extensions",
+    "controller",
+    "layout"
+  ],
+  "main": "steroid-polyter.html",
+  "license": "https://github.com/bquarks/steroid-polyter/blob/master/LICENSE",
+  "homepage": "https://github.com/bquarks/steroid-polyter",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bquarks/steroid-polyter.git"
+  },
+  "ignore": [
+    "/.*"
+
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "bqpage": "bquarks/page.js#~1.6.4",
+    "lodash": "latest"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#latest",
+    "web-component-tester": "*",
+    "paper-drawer-panel": "PolymerElements/paper-drawer-panel#~1.0.2"
+  }
+}

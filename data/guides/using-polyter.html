@@ -1,0 +1,204 @@
+<section class="guide-section">
+<h2 id="polyter">Polyter</h2>
+<p>An element providing advanced routing to your polymer apps.</p>
+<ul>
+<li>Lazy load.</li>
+<li>Complex layout definition.</li>
+<li>Add elements as extensions (to the main and sections elements rendered).</li>
+<li>Hooks (run, before, action, after, stop).</li>
+<li>Redirections.</li>
+<li>Inject data to elements by route.</li>
+</ul>
+</section>
+
+<section class="guide-section">
+<h2 id="using-it-in-your-application">Using it in your application</h2>
+<p>Start installing it into your application with Bower</p>
+<pre><code>bower install steroid-polyter
+</code></pre></section>
+
+<section class="guide-section">
+<h2 id="basic-usage">Basic usage</h2>
+<p>Configure your layout in html. User <code>region=&quot;region-name&quot;</code> to set drawable regions into your schema. A reverved word to draw your main content is <code>main</code>.</p>
+<pre><code>&lt;steroid-polyter&gt;
+    &lt;!-- The regions --&gt;
+    &lt;div region=&quot;header&quot;&gt;&lt;/div&gt;
+    &lt;div region=&quot;sidebar&quot;&gt;&lt;/div&gt;
+    &lt;div region=&quot;main&quot;&gt;&lt;/div&gt;
+&lt;/steroid-polyter&gt;
+</code></pre><p>Set the default configuration for the layout schema.</p>
+<pre><code>window.addEventListener(&#39;webComponentsReady&#39;, function () {
+    Polyter.defaultConfig({
+        layoutElements: {
+            header: &#39;header-element&#39;,
+            sidebar: &#39;sidebar-element&#39;
+        }
+    });
+});
+</code></pre><p>Add a simple route for a polymer element.</p>
+<pre><code>window.addEventListener(&#39;webComponentsReady&#39;, function () {
+    Polyter.addRoute(&#39;/&#39;, {
+        element: &#39;page-home&#39;
+    });
+});
+</code></pre><p>Add route with params.</p>
+<pre><code>window.addEventListener(&#39;webComponentsReady&#39;, function () {
+    Polyter.addRoute(&#39;/store/:category&#39;, function () {
+        element: &#39;page-category&#39;
+    });
+});
+</code></pre><p>Get params into the polymer element.</p>
+<pre><code>Polymer({
+    is: &#39;page-category&#39;,
+
+    created: function () {
+
+        if (this.params.category) {
+            //Make something with the params.
+        }
+    }
+});
+</code></pre></section>
+
+<section class="guide-section">
+<h2 id="advanced-usage">Advanced Usage</h2>
+<h3 id="extensions">Extensions</h3><p>A Polyter extension is a Polymer component instance without render into dom.</p>
+<p>Define a default extension.</p>
+<pre><code>Polyter.defaultConfig({
+    extensions: [polymer-auth, polymer-db]
+});
+</code></pre><p>Define a route extension.</p>
+<pre><code>Polyter.addRoute(&#39;/cars&#39;, {
+    element: &#39;cars-list&#39;,
+
+    extensions: [&#39;price-calculator&#39;]
+});
+</code></pre><p>Accessing to an extension.</p>
+<pre><code>//Some script
+Polyter.ext[&#39;price-calculator&#39;].getTaxPrice(price);
+
+//Cars-list main element lifecycle callbacks
+...
+created: function () {
+    this.ext[&#39;polymer-db&#39;].find(this.params.id);
+}
+...
+
+//Hooks (explained later)
+before: function () {
+    if (!this.ext[&#39;polymer-auth&#39;].logged()) {
+        this.redirect(&#39;login&#39;);
+    }
+}
+</code></pre><p><strong>If your extension needs some configuration add it in before hook, the polymer method <code>factoryImpl</code> will be called just after before hook.</strong></p>
+<h3 id="hooks">Hooks</h3><p>Polyter have 5 hooks to manage the route lifecycle. You can do anythin here. This hooks can be defined by route and by default configuration (complementary).</p>
+<ul>
+<li><strong>run</strong>: this hook is the first callback in the route lifecycle. You have access to the params here.</li>
+<li><strong>before</strong>: here add the extension instances.</li>
+<li><strong>action</strong>: here add the layout and main elements instances.</li>
+<li><strong>after</strong>: here add the layout and main elements rendered instances.</li>
+<li><strong>stop</strong>: this callback is executed when another route is called.</li>
+</ul>
+<pre><code>run: function () {
+    //this have the route scope with the params
+
+    //Access to the params.
+    console.log(&#39;Route params&#39;, this.params);
+
+    //Stop the route propagation
+    this.stop();
+
+    //Redirect to other route (also stop the route propagation)
+    this.redirect(&#39;/login&#39;);
+
+    //Get the previous route!
+    console.log(&#39;Previous route: &#39; + this.previousRoute);
+
+},
+
+before: function () {
+    //Same as above but now we have the extensions injection.
+
+    //Get example extension information.
+    var doc = this.ext[&#39;polymer-db&#39;].find(this.params.id);
+
+    if (doc.isValid) {
+      // do something
+      this.ext.push.send(&#39;car-viewed&#39;, this.params.id);
+    }
+    else {
+      this.redirect(&#39;/error-404&#39;);
+    }
+
+
+    // Maintain the route but change the element to render.
+    if (!this.ext.auth.isLoggedIn) {
+      this.render(&#39;my-login&#39;, &#39;main&#39;);
+    }
+
+},
+
+action: function () {
+    //Same as above but now we have the instances of the defined elements
+
+    //Get the element instance
+    var insPointer = this.instances[&#39;cars-list&#39;];
+
+    //Comes from other book?
+    if (this.previousRoute === this.route) {
+      //Add additional information to the element instance
+      // so we can render it with other view.
+      insPointer.loadAlternativeView();
+    }
+
+
+},
+
+after: function () {
+    //Here we have the elements rendered
+    this.instances[&#39;page-demo&#39;].changeTitle(&#39;new title&#39;); //rules!
+
+    //Also we can do the other things but no this.render()
+
+},
+
+stop: function () {
+    //The route has been changed! Put some information
+    // here for the next route.
+
+    this.ext[&#39;local-storage&#39;].setAdditionalInfo({previousCar: this.params.id});
+}
+</code></pre><h1 id="development">Development</h1></section>
+
+<section class="guide-section">
+<h2 id="dependencies">Dependencies</h2>
+<p>Element dependencies are managed via <a href="http://bower.io/">Bower</a>. You can
+install that via:</p>
+<pre><code>npm install -g bower
+</code></pre><p>Then, go ahead and download the element&#39;s dependencies:</p>
+<pre><code>bower install
+</code></pre></section>
+
+<section class="guide-section">
+<h2 id="playing-with-polyter">Playing With Polyter</h2>
+<p>If you wish to work Polyter in isolation, we recommend that you use
+<a href="https://github.com/PolymerLabs/polyserve">Polyserve</a> to keep your element&#39;s
+bower dependencies in line. You can install it via:</p>
+<pre><code>npm install -g polyserve
+</code></pre><p>And you can run it via:</p>
+<pre><code>polyserve
+</code></pre><p>Once running, you can preview your element at
+<code>http://localhost:8080/components/steroid-polyter/</code>, where <code>steroid-polyter</code> is the name of the directory containing it.</p>
+</section>
+
+<section class="guide-section">
+<h2 id="testing-your-element">Testing Your Element</h2>
+<p>Simply navigate to the <code>/test</code> directory of your element to run its tests. If
+you are using Polyserve: <code>http://localhost:8080/components/steroid-polyter/test/</code></p>
+</section>
+
+<section class="guide-section">
+<h2 id="see-the-demo">See the demo</h2>
+<p>Simply navigate to the <code>/demo</code> directory of the element to se the demo in action
+with Polyserve: <code>http://localhost:8080/components/steroid-polyter/demo/</code></p>
+</section>

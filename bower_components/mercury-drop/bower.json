@@ -1,0 +1,27 @@
+{
+  "name": "mercury-drop",
+  "version": "0.9.4",
+  "description": "Easy draggable lists for web components.",
+  "license": "MIT",
+  "main": "mercury-drop.html",
+  "keywords": [
+    "polymer",
+    "web-components",
+    "draggable",
+    "list"
+  ],
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "homepage": "https://github.com/bquarks/steroid-drop",
+  "authors": [
+    "Francisco López <donflopez@gmail.com>"
+  ]
+}
